@@ -40,7 +40,6 @@ export function fetchNavigation () {
   return function (dispatch) {
     dispatch(requestNavigation());
     return api.get('function', { page_size: RESULTS_PER_PAGE })
-      .then(response => response.json())
       .then(json =>
         dispatch(receiveNavigation(json))
       );
@@ -58,7 +57,7 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [REQUEST_NAVIGATION]: (state, action) => {
+  [REQUEST_NAVIGATION]: (state) => {
     return update(state, {
       isFetching: {
         $set: true
