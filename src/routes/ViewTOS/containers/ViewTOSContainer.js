@@ -58,7 +58,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => {
   return {
     attributeTypes: state.ui.attributeTypes,
-    isFetching: state.ui.isFetching || state.selectedTOS.isFetching,
+    isFetching: state.ui.isFetching && state.selectedTOS.isFetching,
     items: state.navigation.items,
     recordTypes: state.ui.recordTypes,
     selectedTOS: state.selectedTOS
