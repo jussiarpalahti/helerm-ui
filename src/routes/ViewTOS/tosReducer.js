@@ -393,7 +393,7 @@ export const actions = {
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [REQUEST_TOS]: (state, action) => {
+  [REQUEST_TOS]: (state) => {
     return update(state, {
       isFetching: {
         $set: true
