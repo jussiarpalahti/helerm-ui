@@ -42,7 +42,6 @@ export class ViewTOS extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const { route } = nextProps;
-
     // If we have selectedTOS & selectedTOS hasn't change during receiveProps
     // => cache it to state to be able to discard changes
     if (
@@ -66,12 +65,11 @@ export class ViewTOS extends React.Component {
 
   fetchTOS (id) {
     this.props.fetchTOS(id)
-      .then(() => this.props.setNavigationVisibility(false))
-      .catch((err) => {
-        if (err instanceof URIError) {
-          // We have a 404 from API
+      .then(({ error }) => {
+        if (error) {
           this.props.push(`/404?tos-id=${id}`);
         }
+        return this.props.setNavigationVisibility(false);
       });
   }
 
@@ -81,16 +79,17 @@ export class ViewTOS extends React.Component {
 
   sendForInspection () {
     return this.props.sendForInspection(this.props.selectedTOS)
-      .then(() => {
+      .then(({ error }) => {
+        if (error) {
+          console.log(error);
+          return this.props.displayMessage({
+            text: 'Jotain meni vikaan',
+            success: false
+          });
+        }
         return this.props.displayMessage({
           text: 'Luonnos lähetettiin tarkastettavaksi',
           success: true
-        });
-      })
-      .catch(err => {
-        return this.props.displayMessage({
-          text: err.message,
-          success: false
         });
       });
   }
@@ -180,12 +179,12 @@ export class ViewTOS extends React.Component {
       );
     });
     for (const key in attributes) {
-      if (attributes.hasOwnProperty(key)) {
+      if (attributes.hasOwnProperty(key) && attributeTypes.hasOwnProperty(key)) {
         attributeElements.push(
           <Attribute
             key={key}
             attributeIndex={key}
-            attributeKey={this.props.attributeTypes[key].name}
+            attributeKey={attributeTypes[key].name}
             attribute={attributes[key]}
             mode='view'
             type='attribute'
@@ -224,37 +223,41 @@ export class ViewTOS extends React.Component {
   }
 
   generatePhases (phases) {
+    const { selectedTOS: { actions, documentState, records } } = this.props;
     const phaseElements = [];
-    const phasesOrder = Object.keys(this.props.selectedTOS.phases);
-    for (const key in phases) {
-      if (phases.hasOwnProperty(key)) {
-        phaseElements.push(
-          <Phase
-            key={key}
-            phaseIndex={phases[key].id}
-            phase={this.props.selectedTOS.phases[key]}
-            phasesOrder={phasesOrder}
-            setPhaseVisibility={this.setPhaseVisibility}
-            actions={this.props.selectedTOS.actions}
-            phases={this.props.selectedTOS.phases}
-            records={this.props.selectedTOS.records}
-            recordTypes={this.props.recordTypes}
-            documentState={this.props.selectedTOS.documentState}
-            attributeTypes={this.props.attributeTypes}
-            addAction={this.props.addAction}
-            addRecord={this.props.addRecord}
-            editAction={this.props.editAction}
-            editPhase={this.props.editPhase}
-            editRecord={this.props.editRecord}
-            removeAction={this.props.removeAction}
-            removePhase={this.props.removePhase}
-            removeRecord={this.props.removeRecord}
-            displayMessage={this.props.displayMessage}
-            changeOrder={this.props.changeOrder}
-            importItems={this.props.importItems}
-            update={this.state.update}
-          />
-        );
+    const phasesOrder = Object.keys(phases);
+
+    if (actions) {
+      for (const key in phases) {
+        if (phases.hasOwnProperty(key)) {
+          phaseElements.push(
+            <Phase
+              key={key}
+              phaseIndex={phases[key].id}
+              phase={phases[key]}
+              phasesOrder={phasesOrder}
+              setPhaseVisibility={this.setPhaseVisibility}
+              actions={actions}
+              phases={phases}
+              records={records}
+              recordTypes={this.props.recordTypes}
+              documentState={documentState}
+              attributeTypes={this.props.attributeTypes}
+              addAction={this.props.addAction}
+              addRecord={this.props.addRecord}
+              editAction={this.props.editAction}
+              editPhase={this.props.editPhase}
+              editRecord={this.props.editRecord}
+              removeAction={this.props.removeAction}
+              removePhase={this.props.removePhase}
+              removeRecord={this.props.removeRecord}
+              displayMessage={this.props.displayMessage}
+              changeOrder={this.props.changeOrder}
+              importItems={this.props.importItems}
+              update={this.state.update}
+            />
+          );
+        }
       }
     }
     return phaseElements;
@@ -265,7 +268,7 @@ export class ViewTOS extends React.Component {
     if (!isFetching && selectedTOS.id) {
       const phaseElements = this.generatePhases(selectedTOS.phases);
       const TOSMetaData = this.generateMetaData(this.props.attributeTypes, selectedTOS.attributes);
-
+      console.log(selectedTOS.phases);
       return (
         <div>
           <StickyContainer className='col-xs-12 single-tos-container'>
@@ -290,21 +293,23 @@ export class ViewTOS extends React.Component {
                   </IsAuthenticated>
                   }
                   { selectedTOS.documentState === 'edit' &&
-                  <span>
-                    <button
-                      className='btn btn-primary btn-sm pull-right'
-                      onClick={() => this.props.setDocumentState('view')}>
-                      Tallenna luonnos
-                    </button>
-                    <button
-                      className='btn btn-danger btn-sm pull-right'
-                      onClick={this.cancelEdit}>
-                      Peruuta muokkaus
-                    </button>
-                    <span
-                      className='fa fa-asterisk required-asterisk required-legend'> = Pakollinen tieto
+                  <IsAuthenticated>
+                    <span>
+                      <button
+                        className='btn btn-primary btn-sm pull-right'
+                        onClick={() => this.props.setDocumentState('view')}>
+                        Tallenna luonnos
+                      </button>
+                      <button
+                        className='btn btn-danger btn-sm pull-right'
+                        onClick={this.cancelEdit}>
+                        Peruuta muokkaus
+                      </button>
+                      <span
+                        className='fa fa-asterisk required-asterisk required-legend'> = Pakollinen tieto
+                      </span>
                     </span>
-                  </span>
+                  </IsAuthenticated>
                   }
                 </div>
               </div>

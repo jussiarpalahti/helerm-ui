@@ -77,21 +77,6 @@ export function receiveTOS (json) {
   };
 }
 
-export function fetchTOS (tosId) {
-  return function (dispatch) {
-    dispatch(requestTOS());
-    return api.get(`function/${tosId}`)
-      .then(res => {
-        if (!res.ok) {
-          dispatch(TOSError());
-          throw new URIError(res.statusText);
-        }
-        return res.json();
-      })
-      .then(json => dispatch(receiveTOS(json)));
-  };
-}
-
 export function TOSError (error) {
   return {
     type: TOS_ERROR,
@@ -353,19 +338,37 @@ export function changeOrder (newOrder, itemType, itemParent) {
   };
 }
 
+export function fetchTOS (tosId) {
+  return function (dispatch) {
+    dispatch(requestTOS());
+    return api.get(`function/${tosId}`)
+      .then(({ status, statusText, data }) => {
+        if (status !== 200) {
+          return dispatch(TOSError({
+            status,
+            statusText
+          }));
+        }
+        return dispatch(receiveTOS(data));
+      });
+  };
+}
+
 export function sendForInspection (tos) {
   const finalTos = normalizeTosForApi(tos);
   return function (dispatch) {
     dispatch(requestTOS());
     return api.put(`function/${tos.id}`, finalTos)
-      .then(res => {
-        if (!res.ok) {
-          dispatch(TOSError());
-          throw new URIError(res.statusText);
+      .then(({ status, statusText, data }) => {
+        if (status !== 200) {
+          return dispatch(TOSError({
+            status,
+            statusText,
+            data
+          }));
         }
-        return res.json();
-      })
-      .then(json => dispatch(receiveTOS(json)));
+        return dispatch(receiveTOS(data));
+      });
   };
 }
 
