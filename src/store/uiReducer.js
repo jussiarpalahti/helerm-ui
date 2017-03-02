@@ -55,12 +55,9 @@ export function closeMessage () {
 export function fetchAttributeTypes () {
   return function (dispatch) {
     return api.get('attribute/schemas')
-      .then(response => response.json())
       .then(validationRules => {
         return api.get('attribute')
-          .then(response => response.json())
-          .then(json =>
-            dispatch(receiveAttributeTypes(json, validationRules)));
+          .then(({ data }) => dispatch(receiveAttributeTypes(data, validationRules.data)));
       });
   };
 }
@@ -78,7 +75,7 @@ const ACTION_HANDLERS = {
   [RECEIVE_ATTRIBUTE_TYPES]: (state, action) => {
     const recordTypes = action.attributeTypeList.RecordType;
     const recordTypeList = {};
-    recordTypes.values.map(result => {
+    !!recordTypes && recordTypes.values.map(result => {
       const trimmedResult = result.id.replace(/-/g, '');
       recordTypeList[trimmedResult] = result.value;
     });
@@ -97,7 +94,7 @@ const ACTION_HANDLERS = {
       }
     });
   },
-  [CLOSE_MESSAGE]: (state, action) => {
+  [CLOSE_MESSAGE]: (state) => {
     return update(state, {
       message: {
         active: { $set: false },

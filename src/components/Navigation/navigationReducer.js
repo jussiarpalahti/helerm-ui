@@ -40,9 +40,7 @@ export function fetchNavigation () {
   return function (dispatch) {
     dispatch(requestNavigation());
     return api.get('function', { page_size: RESULTS_PER_PAGE })
-      .then(json =>
-        dispatch(receiveNavigation(json))
-      );
+      .then(({ data }) => dispatch(receiveNavigation(data)));
   };
 }
 
