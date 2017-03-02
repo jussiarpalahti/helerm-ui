@@ -92,9 +92,10 @@ export function fetchTOS (tosId) {
   };
 }
 
-export function TOSError () {
+export function TOSError (error) {
   return {
-    type: TOS_ERROR
+    type: TOS_ERROR,
+    error
   };
 }
 
@@ -434,10 +435,13 @@ const ACTION_HANDLERS = {
   [CLEAR_TOS]: () => {
     return initialState;
   },
-  [TOS_ERROR]: (state) => {
+  [TOS_ERROR]: (state, action) => {
     return update(state, {
       isFetching: {
         $set: false
+      },
+      error: {
+        $set: action.error
       }
     });
   },
