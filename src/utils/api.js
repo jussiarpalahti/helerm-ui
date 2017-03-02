@@ -106,7 +106,24 @@ export function callApi (endpoint, params, options = {}) {
   }
 
   finalOptions.headers = defaultHeaders;
-  return fetch(url, finalOptions);
+  return fetch(url, finalOptions)
+    .then(handleResponse);
+}
+
+/**
+ * Handle response
+ * @param response
+ * @returns {*}
+ */
+function handleResponse (response) {
+  if (!response.ok) {
+    throw Error(response.statusText);
+    // response.json()
+    //   .then(res => {
+    //     throw Error(res);
+    //   });
+  }
+  return response.json();
 }
 
 /**
