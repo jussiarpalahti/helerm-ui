@@ -91,7 +91,7 @@ export function callApi (endpoint, params, options = {}) {
 
   defaultHeaders.append('Accept', 'application/json');
 
-  if (!token && !ALLOWED_METHODS_WITHOUT_AUTHENTICATION.includes(finalOptions.method)) {
+  if (!token && ALLOWED_METHODS_WITHOUT_AUTHENTICATION.indexOf(finalOptions.method) !== 0) {
     throw Error(`Following methods for API-endpoint require authentication: ${ALLOWED_METHODS_WITHOUT_AUTHENTICATION.join(', ')}`);
   }
 
@@ -116,14 +116,13 @@ export function callApi (endpoint, params, options = {}) {
  * @returns {*}
  */
 function handleResponse (response) {
-  if (!response.ok) {
-    throw Error(response.statusText);
-    // response.json()
-    //   .then(res => {
-    //     throw Error(res);
-    //   });
-  }
-  return response.json();
+  return response.json().then(data => (
+    {
+      status: response.status,
+      statusText: response.statusText,
+      data
+    })
+  );
 }
 
 /**
