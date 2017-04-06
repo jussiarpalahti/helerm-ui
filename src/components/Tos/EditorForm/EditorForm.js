@@ -8,7 +8,7 @@ export class EditorForm extends React.Component {
     super(props);
     this.generateAttributeElements = this.generateAttributeElements.bind(this);
     this.getActiveValue = this.getActiveValue.bind(this);
-    this.getCheckedState = this.getCheckedState.bind(this);
+    // this.getCheckedState = this.getCheckedState.bind(this);
     this.closeEditorForm = this.closeEditorForm.bind(this);
     this.state = {
       newAttributes: this.initializeAttributes(this.props.attributeTypes),
@@ -74,13 +74,13 @@ export class EditorForm extends React.Component {
     }
   }
 
-  getCheckedState (key) {
-    if (this.props.editorConfig.action === 'edit' && !this.state.newAttributes[key].name) {
-      return false;
-    } else {
-      return this.state.newAttributes[key].checked;
-    }
-  }
+  // getCheckedState (key) {
+  //   if (this.props.editorConfig.action === 'edit' && !this.state.newAttributes[key].name) {
+  //     return false;
+  //   } else {
+  //     return this.state.newAttributes[key].checked;
+  //   }
+  // }
 
   generateOptions (array) {
     return array.map(item => ({
@@ -98,11 +98,11 @@ export class EditorForm extends React.Component {
 
           attributeElements.push(
             <div key={key} className='col-xs-12 col-lg-6 form-group'>
-              <input
+              {/* <input
                 type='checkbox'
                 checked={this.getCheckedState(key)}
                 value={this.state.newAttributes[key].checked}
-                onChange={(e) => this.onChange(!this.state.newAttributes[key].checked, key, 'checked')}/>
+                onChange={(e) => this.onChange(!this.state.newAttributes[key].checked, key, 'checked')}/> */}
               <label className='edit-record__label'>
                 {attributeTypes[key].name}
                 { attributeTypes[key].required &&
@@ -115,7 +115,7 @@ export class EditorForm extends React.Component {
                 autofocus={false}
                 className='form-control edit-record__select'
                 clearable={true}
-                disabled={!this.state.newAttributes[key].checked}
+                // disabled={!this.state.newAttributes[key].checked}
                 onChange={(option) => this.onChange(option ? option.value : null, key, 'name')}
                 openOnFocus={true}
                 options={options}
@@ -126,12 +126,12 @@ export class EditorForm extends React.Component {
         } else if (attributeTypes[key].values.length === 0) {
           attributeElements.push(
             <div key={key} className='col-xs-12 col-lg-6 form-group'>
-              <input
+              {/* <input
                 type='checkbox'
                 checked={this.getCheckedState(key)}
                 value={this.state.newAttributes[key].checked}
                 onChange={(e) => this.onChange(!this.state.newAttributes[key].checked, key, 'checked')}
-              />
+              /> */}
               <label className='edit-record__label'>
                 {attributeTypes[key].name}
                 { attributeTypes[key].required &&
@@ -143,7 +143,7 @@ export class EditorForm extends React.Component {
                 value={this.getActiveValue(key)}
                 placeholder={attributeTypes[key].name}
                 onChange={(e) => this.onChange(e.target.value, key, 'name')}
-                disabled={!this.state.newAttributes[key].checked}
+                // disabled={!this.state.newAttributes[key].checked}
               />
             </div>
           );
