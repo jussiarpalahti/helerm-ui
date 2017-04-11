@@ -275,11 +275,23 @@ export class EditorForm extends React.Component {
 
   renderDescriptions () {
     const typeDropdown = this.generateDropdown(this.props.recordConfig.recordTypes);
+    const resolveSpecifier = () => {
+      switch (this.props.editorConfig.type) {
+        case 'phase':
+          return 'Käsittelyvaihetyypin tarkenne';
+        case 'action':
+          return 'Toimenpidetyypin tarkenne';
+        case 'record':
+          return 'Asiakirjatyypin tarkenne';
+        default:
+          return 'Tarkenne';
+      }
+    };
 
     return (
       <div>
         <div className='col-xs-12 col-lg-6 form-group'>
-          <label className='edit-record__label'>Tarkenne</label>
+          <label className='edit-record__label'>{resolveSpecifier()}</label>
           <span className='fa fa-asterisk required-asterisk'/>
           <input
             className='col-xs-6 form-control edit-record__input'
