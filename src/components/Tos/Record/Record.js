@@ -5,8 +5,6 @@ import DeleteView from '../DeleteView/DeleteView';
 import Dropdown from 'components/Dropdown';
 import Popup from 'components/Popup';
 
-// import { validateRecord } from '../../../utils/validators';
-
 export class Record extends React.Component {
   constructor (props) {
     super(props);
@@ -28,19 +26,6 @@ export class Record extends React.Component {
   setMode (value) {
     this.setState({ mode: value });
   }
-
-  // editRecord () {
-  //   this.setMode('edit');
-  //   this.setState({ showAttributes: true });
-  // }
-
-  // saveRecord () {
-  //   this.setMode('view');
-  // }
-
-  // cancelRecordEdit () {
-  //   this.setMode('view');
-  // }
 
   toggleAttributeVisibility () {
     const currentVisibility = this.state.showAttributes;
@@ -141,13 +126,11 @@ export class Record extends React.Component {
   }
 
   render () {
-    const { record } = this.props; // TYPE IS UNDEFINED
+    const { record } = this.props;
     const recordObjects = this.generateRecordObjects(record);
     const recordAttributes = this.generateRecordAttributes(recordObjects);
     const attributes = this.generateAttributes(record.attributes);
 
-    // const isValidRecord = validateRecord(record, this.props.attributeTypes);
-    // console.log(isValidRecord);
 
     return (
       <div className={'record col-xs-12 ' + (this.state.showAttributes ? 'record-open' : '')}>
@@ -185,18 +168,6 @@ export class Record extends React.Component {
           }
           { recordAttributes }
           { attributes }
-          {/* { this.state.mode === 'edit' &&
-           <div className='col-xs-12'>
-           <button className='btn btn-primary pull-right edit-record__submit'
-           onClick={() => this.saveRecord()}>
-           Valmis
-           </button>
-           <button className='btn btn-default pull-right edit-record__cancel'
-           onClick={() => this.cancelRecordEdit()}>
-           Peruuta
-           </button>
-           </div>
-           } */}
         </div>
         { this.state.deleting &&
         <Popup

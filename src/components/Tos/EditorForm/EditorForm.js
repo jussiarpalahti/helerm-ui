@@ -39,13 +39,6 @@ export class EditorForm extends React.Component {
     return initialState;
   }
 
-  // findRecordTypeFromList (recordType) {
-  //   const correctType = find(this.props.recordTypes, (type) => (
-  //     type.name === recordType
-  //   ));
-  //   return correctType;
-  // }
-
   onChange (value, key, field) {
     this.setState(update(this.state, {
       newAttributes: {
