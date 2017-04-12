@@ -131,7 +131,6 @@ export class Record extends React.Component {
     const recordAttributes = this.generateRecordAttributes(recordObjects);
     const attributes = this.generateAttributes(record.attributes);
 
-
     return (
       <div className={'record col-xs-12 ' + (this.state.showAttributes ? 'record-open' : '')}>
         <div className='list-group'>
