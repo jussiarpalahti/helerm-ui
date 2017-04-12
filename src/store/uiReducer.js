@@ -130,7 +130,7 @@ const receiveAttributeTypesAction = (state, { payload }) => {
       name: result.value
     };
   });
-  delete payload.RecordType;
+  // delete payload.RecordType;
   return update(state, {
     attributeTypes: { $set: payload },
     recordTypes: { $set: recordTypeList },
