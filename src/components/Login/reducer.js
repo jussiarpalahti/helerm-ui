@@ -20,6 +20,7 @@ export function clearUserData () {
   return createAction(CLEAR_USERDATA)();
 }
 
+// FIXME: what is this thing doing...?
 export function retrieveUserFromSession () {
   return function (dispatch) {
     return fetch(`/auth/me?${+new Date()}`, { method: 'GET', credentials: 'same-origin' })
@@ -33,15 +34,17 @@ export function retrieveUserFromSession () {
           return api.get(url)
             .then((helermUserData) => {
               if (helermUserData.status === 401) {
+                console.log("In here I'm ran into trouble with API", helermUserData);
                 return fetch('/auth/logout', {
                   method: 'POST',
                   credentials: 'same-origin',
                   mode: 'no-cors'
                 })
-                  .then(() => {
+                  .then((arg) => {
                     removeStorageItem('token');
                     dispatch(clearUserData());
-                    return window.location.reload();
+                    console.log('Apparently here I decided to re-reload, for good measure', arg);
+                    // return window.location.reload();
                   });
               }
               return helermUserData.json();
