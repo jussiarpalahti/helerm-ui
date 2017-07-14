@@ -5,21 +5,29 @@ import { routerMiddleware } from 'react-router-redux';
 import makeRootReducer from './rootReducers';
 import logger from 'redux-logger';
 import { removeStorageItem } from '../utils/storage';
+import { clearUserData } from '../components/Login/reducer';
 
+let ARG;
 const myLogger = store => next => action => {
   console.log('MyLOG', 'store', store.getState(), 'next', next, 'action', action);
-  if (store.getState().user.id) {
+  // simulating expiration of user token
+  let silloin = '2017-07-14T08:59:20.171Z';
+  let nyt = new Date().toISOString();
+  if (!ARG && nyt > silloin && store.getState().user.id) {
+    ARG = true;
     fetch('/auth/logout', {
       method: 'POST',
       credentials: 'same-origin',
       mode: 'no-cors'
     }).then(() => {
       removeStorageItem('token');
-      let state = store.getState();
-      state.user = {};
-      store.setState(state);
+      store.dispatch(clearUserData());
     });
-    requestAnimationFrame(() => console.log('always logging out logged in users', store.getState()));
+    requestAnimationFrame(() => {
+      if (ARG && !store.getState().user.id) ARG = false;
+      console.log('always logging out logged in users', store.getState());
+      alert('Sessio vanhentunut! Kirjattu ulos automaagisesti!');
+    });
   } else {
     next(action);
   }
