@@ -4,10 +4,25 @@ import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import makeRootReducer from './rootReducers';
 import logger from 'redux-logger';
+import { removeStorageItem } from '../utils/storage';
 
 const myLogger = store => next => action => {
   console.log('MyLOG', 'store', store.getState(), 'next', next, 'action', action);
-  next(action);
+  if (store.getState().user.id) {
+    fetch('/auth/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+      mode: 'no-cors'
+    }).then(() => {
+      removeStorageItem('token');
+      let state = store.getState();
+      state.user = {};
+      store.setState(state);
+    });
+    requestAnimationFrame(() => console.log('always logging out logged in users', store.getState()));
+  } else {
+    next(action);
+  }
 };
 
 export default (initialState = {}) => {
