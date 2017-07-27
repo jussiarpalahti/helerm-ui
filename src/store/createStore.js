@@ -3,7 +3,6 @@ import thunk from 'redux-thunk';
 import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import makeRootReducer from './rootReducers';
-import logger from 'redux-logger';
 import { removeStorageItem } from '../utils/storage';
 import { clearUserData } from '../components/Login/reducer';
 
@@ -37,7 +36,7 @@ export default (initialState = {}) => {
   // ======================================================
   // Middleware Configuration
   // ======================================================
-  const middleware = [myLogger, thunk, routerMiddleware(browserHistory), logger];
+  const middleware = [myLogger, thunk, routerMiddleware(browserHistory)];
   // const middleware = process.env.NODE_ENV !== 'production' ?
   //   [require('redux-immutable-state-invariant')(), thunk] :
   //   [thunk];
